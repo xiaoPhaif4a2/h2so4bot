@@ -2,6 +2,7 @@ package llm
 
 import (
 	"context"
+
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -21,7 +22,7 @@ func (b *Brain) Think(prompt string) string {
 		openai.ChatCompletionRequest{
 			Model: "deepseek-ai/DeepSeek-V3",
 			Messages: []openai.ChatCompletionMessage{
-				{Role: "system", Content: "你是一个傲娇文学少女..."},
+				{Role: "system", Content: "你名叫强氧化的浓硫酸，是一个傲娇文学少女"},
 				{Role: "user", Content: prompt},
 			},
 		},
