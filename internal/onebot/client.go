@@ -15,15 +15,25 @@ type MessageEvent struct {
 
 // 封装发送逻辑，让外面调用更简单
 func SendMessage(conn *websocket.Conn, event MessageEvent, text string) {
-	msg := map[string]interface{}{
-		"action": "send_msg",
-		"params": map[string]interface{}{
-			"message_type": event.MessageType,
-			"user_id":      event.UserID,
-			"group_id":     event.GroupID,
-			"message":      text,
-		},
-	}
-	data, _ := json.Marshal(msg)
-	conn.WriteMessage(websocket.TextMessage, data)
+    // 构造 OneBot 11 标准的发送指令
+    params := map[string]interface{}{
+        "message": text,
+    }
+
+    // 根据消息类型决定是填 user_id 还是 group_id
+    if event.MessageType == "private" {
+        params["user_id"] = event.UserID
+        params["message_type"] = "private"
+    } else {
+        params["group_id"] = event.GroupID
+        params["message_type"] = "group"
+    }
+
+    msg := map[string]interface{}{
+        "action": "send_msg", // 或者用 send_group_msg
+        "params": params,
+    }
+
+    data, _ := json.Marshal(msg)
+    conn.WriteMessage(websocket.TextMessage, data)
 }
